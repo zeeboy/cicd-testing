@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:thrasio-transfer-order-system-api="http://www.mulesoft.org/schema/mule/thrasio-transfer-order-system-api" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:tls="http://www.mulesoft.org/schema/mule/tls"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/tls http://www.mulesoft.org/schema/mule/tls/current/mule-tls.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/thrasio-transfer-order-system-api http://www.mulesoft.org/schema/mule/thrasio-transfer-order-system-api/current/mule-thrasio-transfer-order-system-api.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="eeb0418b-b23e-4bcf-932b-1ef00c2187f5" >
+		<http:listener-connection protocol="HTTPS" host="0.0.0.0" port="8092" >
+			<tls:context >
+				<tls:key-store type="pkcs12" path="keystore.jks" alias="mule" keyPassword="password" password="password" />
+			</tls:context>
+		</http:listener-connection>
+	</http:listener-config>
+	<thrasio-transfer-order-system-api:config
+		name="Thrasio_Transfer_Order_System_API_Config"
+		doc:name="Thrasio Transfer Order System API Config"
+		doc:id="a4527794-7121-46ae-a98f-41d1a8722527"
+		property_host="dev.integration.thras.io'" property_port="443"
+		property_protocol="HTTPS"
+		property_username="cf14c8ab56714d6aa33d36b3611ae4fa"
+		property_password="95c5b5159720489987C350397b4fE04D"
+		property_basePath="/dev-transferorder-sapi/api/2.0"
+		property_responseTimeout="30000" />
+	<flow name="cicd-testingFlow" doc:id="fc31406b-5d9f-4a66-9372-24927dc80a36" >
+		<http:listener doc:name="Listener" doc:id="0324deae-500c-4143-933a-1ec37d114508" config-ref="HTTP_Listener_config" path="/"/>
+		<ee:transform doc:name="Transform Message" doc:id="5a39be3f-6c02-4a09-99dc-f9c1c3263417" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	Test: 'Successfully tested!!!'
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="211e8128-8811-47ab-8ba0-b8c97e5a7208" message="#[payload]"/>
+	</flow>
+</mule>
