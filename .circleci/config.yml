@@ -1,0 +1,45 @@
+version: 2.1
+workflows:
+  version: 2
+  build-deploy: # This workflow will run only on develop branch
+    jobs:
+      - build:
+          context: dev-mulesoft
+          filters:
+            branches:
+              only: 
+                - develop
+  prod-build-deploy: # This workflow will run only on master branch
+    jobs:
+      - build:
+          context: prod-mulesoft
+          filters:
+            branches:
+              only: 
+                - master
+jobs:
+  build:
+    docker:
+      - image: 'cimg/openjdk:11.0'
+    steps:
+      - checkout
+      - restore_cache:
+          key: 'mulesoft-ci-cd-{{ checksum "pom.xml" }}'
+      - save_cache:
+          paths:
+            - ~/.m2
+          key: 'mulesoft-ci-cd-{{ checksum "pom.xml" }}'
+      - run:
+          name: cloudhub deployment
+          command: |
+            echo $project.name
+            mvn -s .circleci/settings.xml clean deploy -DmuleDeploy\
+             -DCONNECTED_APP_CLIENT_ID=${CONNECTED_APP_CLIENT_ID}\
+             -DCONNECTED_APP_CLIENT_SECRET=${CONNECTED_APP_CLIENT_SECRET}\
+             -DCLOUDHUB_ENV=${CLOUDHUB_ENV}\
+             -DCLOUDHUB_REGION=${CLOUDHUB_REGION}\
+             -DMULE_ENV=${MULE_ENV}\
+             -DMULE_KEY=${MULE_KEY}\
+             -DAPP_PREFIX=${APP_PREFIX}\
+             -Danypoint.platform.client_id=${API_MANAGER_CLIENT_ID}\
+             -Danypoint.platform.client_secret=${API_MANAGER_CLIENT_SECRET}
