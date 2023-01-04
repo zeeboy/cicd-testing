@@ -8,6 +8,11 @@
   </proxies>
   <servers>
     <server>
+      <id>MuleEERepo</id>
+      <username>nexus-user</username>
+      <password>xxxxxxxxxx</password>
+    </server>
+    <server>
       <id>anypoint-exchange-v2</id>
       <username>~~~Client~~~</username>
       <password>xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx~?~xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx</password>
